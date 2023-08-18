@@ -1,8 +1,5 @@
 package com.springsport.judo.models;
 
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
@@ -30,4 +27,9 @@ public class User {
     @NotNull(message = "The user_surname is required.")
     private String user_surname;
 
+    public User(@NotNull @Positive Long user_id, @NotNull String user_name, @NotNull String user_surname){
+        this.setUser_id(user_id);
+        this.setUser_name(user_name);
+        this.setUser_surname(user_surname);
+    }
 }
