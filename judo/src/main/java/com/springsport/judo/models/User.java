@@ -26,6 +26,9 @@ public class User {
 
     @NotNull(message = "The user_surname is required.")
     private String user_surname;
+    
+    public User(){
+    }
 
     public User(@NotNull @Positive Long user_id, @NotNull String user_name, @NotNull String user_surname){
         this.setUser_id(user_id);
