@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springsport.judo.models.User;
 import com.springsport.judo.repositories.UserRepository;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
@@ -34,7 +36,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody final User user){
+    public User create(@Valid @RequestBody final User user){
         return userRepository.saveAndFlush(user);
     }
 
@@ -44,7 +46,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public User update(@PathVariable Long id, @RequestBody User user) {
+    public User update(@PathVariable Long id, @Valid @RequestBody User user) {
         User existingUser = userRepository.getReferenceById(id);
         BeanUtils.copyProperties(user, existingUser, "user_id");
         return userRepository.saveAndFlush(existingUser);
