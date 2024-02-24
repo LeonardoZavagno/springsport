@@ -1,4 +1,4 @@
-package com.springsport.judo.controllers;
+package com.springsport.core.controllers;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.springsport.judo.models.User;
-import com.springsport.judo.repositories.UserRepository;
+import com.springsport.core.models.User;
+import com.springsport.core.repositories.UserRepository;
 
 import jakarta.validation.Valid;
 

@@ -1,4 +1,4 @@
-package com.springsport.judo.controllers;
+package com.springsport.core.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

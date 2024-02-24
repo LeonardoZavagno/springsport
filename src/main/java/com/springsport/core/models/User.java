@@ -1,4 +1,4 @@
-package com.springsport.judo.models;
+package com.springsport.core.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

@@ -1,4 +1,4 @@
-package com.springsport.judo.controllers.exceptions;
+package com.springsport.core.controllers.exceptions;
 
 import java.util.HashMap;
 import java.util.List;

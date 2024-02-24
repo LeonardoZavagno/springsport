@@ -1,4 +1,4 @@
-package com.springsport.judo.controllers;
+package com.springsport.core.controllers;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -15,7 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.springsport.judo.models.User;
+import com.springsport.core.models.User;
 
 @WebMvcTest(UserController.class)
 public class UserControllerTest {

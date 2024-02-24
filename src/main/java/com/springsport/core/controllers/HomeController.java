@@ -1,4 +1,4 @@
-package com.springsport.judo.controllers;
+package com.springsport.core.controllers;
 
 import java.util.HashMap;
 import java.util.Map;
