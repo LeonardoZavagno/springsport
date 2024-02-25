@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springsport.core.controllers.exceptions.EntityAlreadyExistsException;
 import com.springsport.core.models.User;
 import com.springsport.core.repositories.UserRepository;
 
@@ -37,6 +38,10 @@ public class UserController {
 
     @PostMapping
     public User create(@Valid @RequestBody final User user){
+        boolean isUserAlreadyExists = userRepository.findById(user.getUser_id()).isPresent();
+        if(isUserAlreadyExists){
+            throw new EntityAlreadyExistsException();
+        }
         return userRepository.saveAndFlush(user);
     }
 
