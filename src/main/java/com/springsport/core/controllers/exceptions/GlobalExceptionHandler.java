@@ -63,4 +63,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(IdNullRequiredException.class)
+    public ResponseEntity<Object> handleIdNullRequiredException(IdNullRequiredException exception) {
+        Map<String, List<String>> body = new HashMap<>();
+
+        body.put("errors", List.of("Id must be null"));
+
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }

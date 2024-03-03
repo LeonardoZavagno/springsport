@@ -14,16 +14,12 @@
             <table>
                 <tbody>
                     <tr>
-                        <td><form:label path="user_id">ID:</form:label></td>
-                        <td><form:input type="text" path="user_id"/></td>
-                    </tr>
-                    <tr>
                         <td><form:label path="user_name">NAME:</form:label></td>
-                        <td><form:input type="text" path="user_name"/></td>
+                        <td><form:input type="text" path="user_name" maxlength="50"/></td>
                     </tr>
                     <tr>
                         <td><form:label path="user_surname">SURNAME:</form:label></td>
-                        <td><form:input type="text" path="user_surname"/></td>
+                        <td><form:input type="text" path="user_surname" maxlength="50" /></td>
                     </tr>
                 </tbody>
             </table>
