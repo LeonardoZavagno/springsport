@@ -17,14 +17,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.springsport.core.models.User;
 
-@WebMvcTest(UserController.class)
-public class UserControllerTest {
+@WebMvcTest(UserRestController.class)
+public class UserRestControllerTest {
 
     @Autowired
 	private MockMvc mockMvc;
 
 	@MockBean
-	private UserController controller;
+	private UserRestController controller;
 
 	@Test
 	public void controllerShouldReturnAllUsers() throws Exception {

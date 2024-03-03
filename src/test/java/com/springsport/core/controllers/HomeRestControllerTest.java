@@ -10,10 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class HomeControllerTest {
+public class HomeRestControllerTest {
     
 	@Autowired
-	private HomeController controller;
+	private HomeRestController controller;
 
 	@Autowired
 	private TestRestTemplate restTemplate;
