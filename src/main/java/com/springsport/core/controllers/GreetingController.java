@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class GreetingController {
 
-    @GetMapping("greeting")
+    @GetMapping("/greeting")
     public String greeting (Model model) {
         model.addAttribute("message", "Hello Leo");
         return "greeting.jsp";
