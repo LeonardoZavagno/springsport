@@ -9,7 +9,7 @@ public class GreetingController {
 
     @GetMapping("/greeting")
     public String greeting (Model model) {
-        model.addAttribute("message", "Hello Leo");
+        model.addAttribute("message", "Hello Leonardo");
         return "greeting.jsp";
     }
 

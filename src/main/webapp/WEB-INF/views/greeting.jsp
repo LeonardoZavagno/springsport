@@ -5,6 +5,8 @@
     <title>Greeting</title>
 </head>
 <body>
-<h1>${message}</h1>
+    <h1>${message}</h1>
+    <br/>
+    <a href="users">Go to Users</a>
 </body>
 </html>
