@@ -1,4 +1,4 @@
-package com.springsport.core.controllers;
+package com.springsport.core.controllers.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

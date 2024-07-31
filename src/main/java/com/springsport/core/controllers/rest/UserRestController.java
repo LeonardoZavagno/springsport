@@ -1,4 +1,4 @@
-package com.springsport.core.controllers;
+package com.springsport.core.controllers.rest;
 
 import java.util.List;
 import java.util.Optional;

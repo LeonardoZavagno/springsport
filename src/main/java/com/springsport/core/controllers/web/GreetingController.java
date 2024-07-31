@@ -1,4 +1,4 @@
-package com.springsport.core.controllers;
+package com.springsport.core.controllers.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
