@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.springsport.core.models.User;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+
 @WebMvcTest(UserRestController.class)
 public class UserRestControllerTest {
 
@@ -38,7 +40,7 @@ public class UserRestControllerTest {
         User user2 = new User(2L, "name_2", "surname_2");
 
 		when(controller.list()).thenReturn(List.of(user1, user2));
-		this.mockMvc.perform(get("/api/v1/users"))
+		this.mockMvc.perform(get("/api/v1/users").with(user("admin").roles("ADMIN")))
             .andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$[0].user_id").value(user1.getUser_id()))
             .andExpect(jsonPath("$[1].user_id").value(user2.getUser_id()))
@@ -53,7 +55,7 @@ public class UserRestControllerTest {
         User user1 = new User(1L, "name_1", "surname_1");
 
 		when(controller.get(1L)).thenReturn(user1);
-		this.mockMvc.perform(get("/api/v1/users/1"))
+		this.mockMvc.perform(get("/api/v1/users/1").with(user("admin").roles("ADMIN")))
             .andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.user_id").value(user1.getUser_id()))
             .andExpect(jsonPath("$.user_name").value(user1.getUser_name()))

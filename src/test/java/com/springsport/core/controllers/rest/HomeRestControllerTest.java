@@ -14,6 +14,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+
 @WebMvcTest(HomeRestController.class)
 public class HomeRestControllerTest {
 
@@ -33,7 +35,7 @@ public class HomeRestControllerTest {
 
 	@Test
 	public void controllerShouldReturnDefaultMessage() throws Exception {
-		this.mockMvc.perform(get("/"))
+		this.mockMvc.perform(get("/").with(user("admin").roles("ADMIN")))
             .andDo(print()).andExpect(status().isOk())
 			.andExpect(jsonPath("$.app-version").value(appVersion));
 	}
