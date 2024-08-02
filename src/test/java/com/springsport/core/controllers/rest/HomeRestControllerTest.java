@@ -35,7 +35,7 @@ public class HomeRestControllerTest {
 
 	@Test
 	public void controllerShouldReturnDefaultMessage() throws Exception {
-		this.mockMvc.perform(get("/").with(user("admin").roles("ADMIN")))
+		this.mockMvc.perform(get("/app-version").with(user("admin").roles("ADMIN")))
             .andDo(print()).andExpect(status().isOk())
 			.andExpect(jsonPath("$.app-version").value(appVersion));
 	}

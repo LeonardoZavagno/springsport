@@ -10,7 +10,7 @@ public class SpringSportApplication {
 		SpringApplication.run(SpringSportApplication.class, args);
 
 		//maven --> ./mvnw.cmd clean package
-		//index --> http://localhost:8080/greeting
+		//index --> http://localhost:8080/
 		//users --> http://localhost:8080/api/v1/users
 	}
 

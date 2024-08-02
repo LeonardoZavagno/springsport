@@ -9,6 +9,8 @@
         <title>View Users</title>
     </head>
     <body>
+        <a href="/">Home</a>
+        <br/>
         <h2>New User</h2>
         <c:url var="add_user_url" value="/users/adduser"/>
         <form:form action="${add_user_url}" method="post" modelAttribute="user">

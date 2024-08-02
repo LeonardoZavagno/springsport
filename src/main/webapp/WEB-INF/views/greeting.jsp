@@ -8,5 +8,7 @@
     <h1>${message}</h1>
     <br/>
     <a href="users">Go to Users</a>
+    <br/>
+    <a href="logout">Logout</a>
 </body>
 </html>
