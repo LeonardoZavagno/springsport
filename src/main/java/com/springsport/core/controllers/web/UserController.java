@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.springsport.core.models.User;
-import com.springsport.core.repositories.UserRepository;
+import com.springsport.core.services.UserService;
 
 import jakarta.validation.Valid;
 
@@ -21,20 +21,20 @@ import jakarta.validation.Valid;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @GetMapping
     public String viewUsers(Model model) {
         model.addAttribute("user", new User());
-        model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("users", userService.list());
         return "users.jsp";
     }
 
-    @PostMapping("/adduser")
-    public RedirectView addUser(@ModelAttribute("user") @Valid @RequestBody final User user, RedirectAttributes redirectAttributes) {
-        final RedirectView redirectView = new RedirectView("/users", true);
-        userRepository.saveAndFlush(user);
+    @PostMapping("/create")
+    public RedirectView create(@ModelAttribute("user") @Valid @RequestBody final User user, RedirectAttributes redirectAttributes) {
+        userService.create(user);
         
+        final RedirectView redirectView = new RedirectView("/users", true);
         return redirectView;
     } 
 }

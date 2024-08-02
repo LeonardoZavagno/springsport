@@ -11,9 +11,12 @@
     <body>
         <a href="/">Home</a>
         <br/>
-        <h2>New User</h2>
-        <c:url var="add_user_url" value="/users/adduser"/>
-        <form:form action="${add_user_url}" method="post" modelAttribute="user">
+        <a href="logout">Logout</a>
+        <br/>
+        <hr>
+        <h1>New User</h1>
+        <c:url var="create_url" value="/users/create"/>
+        <form:form action="${create_url}" method="post" modelAttribute="user">
             <table>
                 <tbody>
                     <tr>
@@ -29,8 +32,8 @@
             <input type="submit" value="Insert"/>
         </form:form>
         <br/>
-        <br/>
-        <h2>List Users</h2>
+        <hr>
+        <h1>List Users</h1>
         <table>
             <thead>
                 <tr>

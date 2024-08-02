@@ -5,10 +5,11 @@
     <title>Greeting</title>
 </head>
 <body>
-    <h1>${message}</h1>
-    <br/>
     <a href="users">Go to Users</a>
     <br/>
     <a href="logout">Logout</a>
+    <br/>
+    <hr>
+    <h1>${message}</h1>
 </body>
 </html>
