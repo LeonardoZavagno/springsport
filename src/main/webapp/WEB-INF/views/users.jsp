@@ -48,6 +48,12 @@
                         <td>${user.user_id}</td>
                         <td>${user.user_name}</td>
                         <td>${user.user_surname}</td>
+                        <td>
+                            <c:url var="delete_url" value="/users/delete/${user.user_id}"/>
+                            <form:form action="${delete_url}" method="get">
+                                <input type="submit" value="Delete"/>
+                            </form:form>
+                        </td>
                     </tr>
                 </c:forEach>
             </tbody>
