@@ -31,7 +31,7 @@ public class UserRestController {
         return userService.list();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public User get(@PathVariable @NotNull Long id) {
         return userService.get(id);
     }
@@ -41,12 +41,12 @@ public class UserRestController {
         return userService.create(user);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable @NotNull Long id) {
         userService.delete(id);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public User update(@PathVariable @NotNull Long id, @Valid @RequestBody User user) {
         return userService.update(id, user);
     }
