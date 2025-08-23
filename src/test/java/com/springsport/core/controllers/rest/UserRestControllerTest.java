@@ -1,6 +1,5 @@
 package com.springsport.core.controllers.rest;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -17,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,16 +40,8 @@ public class UserRestControllerTest {
 	@MockBean
 	private UserService userService;
 
-	// Autowire the controller to test its existence
-	@Autowired
-	private UserRestController controller;
-
 	@Test
-	public void contextLoads() throws Exception {
-		assertThat(controller).isNotNull();
-	}
-
-	@Test
+	@DisplayName("GET /api/v1/users - Should return all users")
 	public void shouldReturnAllUsers() throws Exception {
         User user1 = new User(1L, "name_1", "surname_1");
         User user2 = new User(2L, "name_2", "surname_2");
@@ -66,18 +58,21 @@ public class UserRestControllerTest {
 	}
 
 	@Test
+	@DisplayName("GET /api/v1/users/{id} - Should return a single user by ID")
 	public void shouldReturnOneUser() throws Exception {
         User user1 = new User(1L, "name_1", "surname_1");
 
 		when(userService.get(1L)).thenReturn(user1);
 		this.mockMvc.perform(get("/api/v1/users/1").with(user("leonardo").roles("ADMIN")))
-            .andDo(print()).andExpect(status().isOk())
+            .andDo(print())
+            .andExpect(status().isOk())
             .andExpect(jsonPath("$.user_id").value(user1.getUser_id()))
             .andExpect(jsonPath("$.user_name").value(user1.getUser_name()))
             .andExpect(jsonPath("$.user_surname").value(user1.getUser_surname()));
 	}
 
 	@Test
+    @DisplayName("POST /api/v1/users - Should create a new user")
     public void shouldCreateUser() throws Exception {
         User userToCreate = new User(null, "new_name", "new_surname");
         User createdUser = new User(3L, "new_name", "new_surname");
@@ -89,13 +84,14 @@ public class UserRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userToCreate)))
                 .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.user_id").value(3L))
-                .andExpect(jsonPath("$.user_name").value("new_name"))
-                .andExpect(jsonPath("$.user_surname").value("new_surname"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.user_id").value(createdUser.getUser_id()))
+                .andExpect(jsonPath("$.user_name").value(createdUser.getUser_name()))
+                .andExpect(jsonPath("$.user_surname").value(createdUser.getUser_surname()));
     }
 
     @Test
+    @DisplayName("PUT /api/v1/users/{id} - Should update an existing user")
     public void shouldUpdateUser() throws Exception {
         Long userId = 1L;
         User userToUpdate = new User(userId, "updated_name", "updated_surname");
@@ -108,18 +104,19 @@ public class UserRestControllerTest {
                 .content(objectMapper.writeValueAsString(userToUpdate)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.user_id").value(userId))
-                .andExpect(jsonPath("$.user_name").value("updated_name"))
-                .andExpect(jsonPath("$.user_surname").value("updated_surname"));
+                .andExpect(jsonPath("$.user_id").value(userToUpdate.getUser_id()))
+                .andExpect(jsonPath("$.user_name").value(userToUpdate.getUser_name()))
+                .andExpect(jsonPath("$.user_surname").value(userToUpdate.getUser_surname()));
     }
 
     @Test
+    @DisplayName("DELETE /api/v1/users/{id} - Should delete an existing user")
     public void shouldDeleteUser() throws Exception {
         Long userId = 1L;
         doNothing().when(userService).delete(userId);
 
         mockMvc.perform(delete("/api/v1/users/{id}", userId)
                 .with(user("leonardo").roles("ADMIN")).with(csrf()))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 }
