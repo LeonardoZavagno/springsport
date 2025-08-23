@@ -1,87 +1,166 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib uri="jakarta.tags.core" prefix="c" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>View Users</title>
-    </head>
-    <body>
-        <a href="/">Home</a>
-        <br/>
-        <a href="logout">Logout</a>
-        <br/>
-        <hr>
-        <c:if test="${not empty message}">
-            <p style="color:green;">${message}</p>
-        </c:if>
-        <c:choose>
-            <c:when test="${not empty user.user_id}">
-                <h1>Edit User</h1>
-                <c:url var="form_url" value="/users/update/${user.user_id}"/>
-            </c:when>
-            <c:otherwise>
-                <h1>New User</h1>
-                <c:url var="form_url" value="/users/create"/>
-            </c:otherwise>
-        </c:choose>
-        <form:form action="${form_url}" method="post" modelAttribute="user">
-            <form:hidden path="user_id"/>
-            <table>
-                <tbody>
-                    <tr>
-                        <td><form:label path="user_name">NAME:</form:label></td>
-                        <td><form:input type="text" path="user_name" maxlength="50"/></td>
-                    </tr>
-                    <tr>
-                        <td><form:label path="user_surname">SURNAME:</form:label></td>
-                        <td><form:input type="text" path="user_surname" maxlength="50"/></td>
-                    </tr>
-                </tbody>
-            </table>
-            <c:choose>
-                <c:when test="${not empty user.user_id}">
-                    <input type="submit" value="Update"/>
-                    <a href="/users">Cancel</a>
-                </c:when>
-                <c:otherwise>
-                    <input type="submit" value="Create"/>
-                </c:otherwise>
-            </c:choose>
-        </form:form>
-        <br/>
-        <hr>
-        <h1>List Users</h1>
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+    <%-- These meta tags are populated by Spring Security and hold the CSRF token --%>
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
+</head>
+<body>
+    <a href="/">Home</a>
+    <br/>
+    <hr>
+    <div id="message" style="color:green; font-weight: bold;"></div>
+    <h1>New/Edit User</h1>
+    <form id="user-form">
+        <input type="hidden" id="user_id"/>
         <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>NAME</th>
-                    <th>SURNAME</th>
-                    <th colspan="2">ACTIONS</th>
-                </tr>
-            </thead>
             <tbody>
-                <c:forEach items="${users}" var="user">
-                    <tr>
-                        <td>${user.user_id}</td>
-                        <td>${user.user_name}</td>
-                        <td>${user.user_surname}</td>
-                        <td>
-                            <c:url var="edit_url" value="/users/edit/${user.user_id}"/>
-                            <a href="${edit_url}">Edit</a>
-                        </td>
-                        <td>
-                            <c:url var="delete_url" value="/users/delete/${user.user_id}"/>
-                            <form:form action="${delete_url}" method="post">
-                                <input type="submit" value="Delete"/>
-                            </form:form>
-                        </td>
-                    </tr>
-                </c:forEach>
+                <tr>
+                    <td><label for="user_name">NAME:</label></td>
+                    <td><input type="text" id="user_name" maxlength="50" required/></td>
+                </tr>
+                <tr>
+                    <td><label for="user_surname">SURNAME:</label></td>
+                    <td><input type="text" id="user_surname" maxlength="50" required/></td>
+                </tr>
             </tbody>
         </table>
-    </body>
+        <input type="submit" value="Create"/>
+        <button type="button" id="cancel-edit">Cancel</button>
+    </form>
+    <br/>
+    <hr>
+    <h1>List Users</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>NAME</th>
+                <th>SURNAME</th>
+                <th colspan="2">ACTIONS</th>
+            </tr>
+        </thead>
+        <tbody id="users-table-body">
+        </tbody>
+    </table>
+
+    <script>
+        const userForm = document.getElementById('user-form');
+        const userIdField = document.getElementById('user_id');
+        const userNameField = document.getElementById('user_name');
+        const userSurnameField = document.getElementById('user_surname');
+        const usersTableBody = document.getElementById('users-table-body');
+        const messageDiv = document.getElementById('message');
+        const cancelBtn = document.getElementById('cancel-edit');
+
+        // Read CSRF token from the meta tags injected by the server
+        const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+        const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+
+        const API_URL = '/api/v1/users';
+
+        const apiHeaders = {
+            'Content-Type': 'application/json',
+            [csrfHeader]: csrfToken // Add CSRF token to headers for state-changing requests
+        };
+
+        async function fetchAPI(url, options = {}) {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            // Handle no-content responses (like for DELETE)
+            if (response.status === 204) {
+                return null;
+            }
+            return response.json();
+        }
+
+        async function getUsers() {
+            try {
+                const users = await fetchAPI(API_URL);
+                usersTableBody.innerHTML = '';
+                users.forEach(user => {
+                    const row = usersTableBody.insertRow();
+                    row.insertCell().textContent = user.user_id;
+                    row.insertCell().textContent = user.user_name;
+                    row.insertCell().textContent = user.user_surname;
+
+                    // Create Edit button with an event listener to avoid string escaping issues
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Edit';
+                    editButton.addEventListener('click', () => editUser(user.user_id, user.user_name, user.user_surname));
+                    row.insertCell().appendChild(editButton);
+
+                    // Create Delete button with an event listener for consistency and best practice
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.addEventListener('click', () => deleteUser(user.user_id));
+                    row.insertCell().appendChild(deleteButton);
+                });
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        }
+
+        async function saveUser(user) {
+            const id = userIdField.value;
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_URL}/${id}` : API_URL;
+
+            try {
+                await fetchAPI(url, { method, headers: apiHeaders, body: JSON.stringify(user) });
+                showMessage(`User ${id ? 'updated' : 'created'} successfully!`);
+                resetForm();
+                getUsers();
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        }
+
+        async function deleteUser(id) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                try {
+                    await fetchAPI(`${API_URL}/${id}`, { method: 'DELETE', headers: apiHeaders });
+                    showMessage('User deleted successfully!');
+                    getUsers();
+                } catch (error) {
+                    showMessage(error.message, true);
+                }
+            }
+        }
+
+        function editUser(id, name, surname) {
+            userIdField.value = id;
+            userNameField.value = name;
+            userSurnameField.value = surname;
+            userForm.querySelector('input[type="submit"]').value = 'Update';
+        }
+
+        function resetForm() {
+            userForm.reset();
+            userIdField.value = '';
+            userForm.querySelector('input[type="submit"]').value = 'Create';
+        }
+
+        function showMessage(msg, isError = false) {
+            messageDiv.textContent = msg;
+            messageDiv.style.color = isError ? 'red' : 'green';
+        }
+
+        userForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = { user_name: userNameField.value, user_surname: userSurnameField.value };
+            saveUser(user);
+        });
+
+        cancelBtn.addEventListener('click', resetForm);
+
+        // Initial load of users
+        getUsers();
+    </script>
+</body>
 </html>

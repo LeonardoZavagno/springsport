@@ -48,28 +48,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request) {
         Map<String, List<String>> body = new HashMap<>();
-
-        body.put("errors", List.of("Entity not found"));
-
+        body.put("errors", List.of(ex.getMessage()));
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
-    public ResponseEntity<Object> handleEntityAlreadyExistsException(EntityAlreadyExistsException exception) {
+    public ResponseEntity<Object> handleEntityAlreadyExistsException(EntityAlreadyExistsException ex) {
         Map<String, List<String>> body = new HashMap<>();
-
-        body.put("errors", List.of("Entity already exists"));
-
-        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        body.put("errors", List.of(ex.getMessage()));
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(IdNullRequiredException.class)
-    public ResponseEntity<Object> handleIdNullRequiredException(IdNullRequiredException exception) {
+    public ResponseEntity<Object> handleIdNullRequiredException(IdNullRequiredException ex) {
         Map<String, List<String>> body = new HashMap<>();
-
-        body.put("errors", List.of("Id must be null"));
-
-        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        body.put("errors", List.of(ex.getMessage()));
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
 }
