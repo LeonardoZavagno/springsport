@@ -29,8 +29,7 @@ public class UserRestController {
         return userService.list();
     }
 
-    @GetMapping
-    @RequestMapping("{id}")
+    @GetMapping("{id}")
     public User get(@PathVariable @NotNull Long id) {
         return userService.get(id);
     }
