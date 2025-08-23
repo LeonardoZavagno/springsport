@@ -1,24 +1,32 @@
 package com.springsport.core.controllers.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springsport.core.models.User;
-
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import com.springsport.core.services.UserService;
 
 @WebMvcTest(UserRestController.class)
 public class UserRestControllerTest {
@@ -26,7 +34,14 @@ public class UserRestControllerTest {
     @Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	@MockBean
+	private UserService userService;
+
+	// Autowire the controller to test its existence
+	@Autowired
 	private UserRestController controller;
 
 	@Test
@@ -35,12 +50,12 @@ public class UserRestControllerTest {
 	}
 
 	@Test
-	public void controllerShouldReturnAllUsers() throws Exception {
+	public void shouldReturnAllUsers() throws Exception {
         User user1 = new User(1L, "name_1", "surname_1");
         User user2 = new User(2L, "name_2", "surname_2");
 
-		when(controller.list()).thenReturn(List.of(user1, user2));
-		this.mockMvc.perform(get("/api/v1/users").with(user("admin").roles("ADMIN")))
+		when(userService.list()).thenReturn(List.of(user1, user2));
+		this.mockMvc.perform(get("/api/v1/users").with(user("leonardo").roles("ADMIN")))
             .andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$[0].user_id").value(user1.getUser_id()))
             .andExpect(jsonPath("$[1].user_id").value(user2.getUser_id()))
@@ -51,14 +66,60 @@ public class UserRestControllerTest {
 	}
 
 	@Test
-	public void controllerShouldReturnOneUser() throws Exception {
+	public void shouldReturnOneUser() throws Exception {
         User user1 = new User(1L, "name_1", "surname_1");
 
-		when(controller.get(1L)).thenReturn(user1);
-		this.mockMvc.perform(get("/api/v1/users/1").with(user("admin").roles("ADMIN")))
+		when(userService.get(1L)).thenReturn(user1);
+		this.mockMvc.perform(get("/api/v1/users/1").with(user("leonardo").roles("ADMIN")))
             .andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$.user_id").value(user1.getUser_id()))
             .andExpect(jsonPath("$.user_name").value(user1.getUser_name()))
             .andExpect(jsonPath("$.user_surname").value(user1.getUser_surname()));
 	}
+
+	@Test
+    public void shouldCreateUser() throws Exception {
+        User userToCreate = new User(null, "new_name", "new_surname");
+        User createdUser = new User(3L, "new_name", "new_surname");
+
+        when(userService.create(any(User.class))).thenReturn(createdUser);
+
+        mockMvc.perform(post("/api/v1/users")
+                .with(user("leonardo").roles("ADMIN")).with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userToCreate)))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.user_id").value(3L))
+                .andExpect(jsonPath("$.user_name").value("new_name"))
+                .andExpect(jsonPath("$.user_surname").value("new_surname"));
+    }
+
+    @Test
+    public void shouldUpdateUser() throws Exception {
+        Long userId = 1L;
+        User userToUpdate = new User(userId, "updated_name", "updated_surname");
+
+        when(userService.update(eq(userId), any(User.class))).thenReturn(userToUpdate);
+
+        mockMvc.perform(put("/api/v1/users/{id}", userId)
+                .with(user("leonardo").roles("ADMIN")).with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userToUpdate)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.user_id").value(userId))
+                .andExpect(jsonPath("$.user_name").value("updated_name"))
+                .andExpect(jsonPath("$.user_surname").value("updated_surname"));
+    }
+
+    @Test
+    public void shouldDeleteUser() throws Exception {
+        Long userId = 1L;
+        doNothing().when(userService).delete(userId);
+
+        mockMvc.perform(delete("/api/v1/users/{id}", userId)
+                .with(user("leonardo").roles("ADMIN")).with(csrf()))
+                .andExpect(status().isNoContent());
+    }
 }
