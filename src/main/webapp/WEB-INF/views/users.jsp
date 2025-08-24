@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>User Management</title>
-    <%-- These meta tags are populated by Spring Security and hold the CSRF token --%>
     <meta name="_csrf" content="${_csrf.token}"/>
     <meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
@@ -55,7 +54,6 @@
         const messageDiv = document.getElementById('message');
         const cancelBtn = document.getElementById('cancel-edit');
 
-        // Read CSRF token from the meta tags injected by the server
         const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
         const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
 
@@ -63,7 +61,7 @@
 
         const apiHeaders = {
             'Content-Type': 'application/json',
-            [csrfHeader]: csrfToken // Add CSRF token to headers for state-changing requests
+            [csrfHeader]: csrfToken
         };
 
         async function fetchAPI(url, options = {}) {
@@ -72,7 +70,6 @@
                 const errorText = await response.text();
                 throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorText}`);
             }
-            // Handle no-content responses (like for DELETE)
             if (response.status === 204) {
                 return null;
             }
@@ -89,13 +86,11 @@
                     row.insertCell().textContent = user.user_name;
                     row.insertCell().textContent = user.user_surname;
 
-                    // Create Edit button with an event listener to avoid string escaping issues
                     const editButton = document.createElement('button');
                     editButton.textContent = 'Edit';
                     editButton.addEventListener('click', () => editUser(user.user_id, user.user_name, user.user_surname));
                     row.insertCell().appendChild(editButton);
 
-                    // Create Delete button with an event listener for consistency and best practice
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = 'Delete';
                     deleteButton.addEventListener('click', () => deleteUser(user.user_id));
@@ -159,7 +154,6 @@
 
         cancelBtn.addEventListener('click', resetForm);
 
-        // Initial load of users
         getUsers();
     </script>
 </body>
