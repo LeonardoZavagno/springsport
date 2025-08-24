@@ -68,7 +68,7 @@
             const response = await fetch(url, options);
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorText}`);
+                throw new Error('API request failed: '+response.status+' '+response.statusText+' - '+errorText);
             }
             if (returnJson) {
                 return response.json();
@@ -104,11 +104,11 @@
         async function saveUser(user) {
             const id = userIdField.value;
             const method = id ? 'PUT' : 'POST';
-            const url = id ? `${API_URL}/${id}` : API_URL;
+            const url = id ? API_URL+'/'+id : API_URL;
 
             try {
                 await fetchAPI(url, false, { method, headers: apiHeaders, body: JSON.stringify(user) });
-                showMessage(`User ${id ? 'updated' : 'created'} successfully!`);
+                showMessage(id ? 'User updated successfully!' : 'User created successfully!');
                 resetForm();
                 getUsers();
             } catch (error) {
@@ -119,7 +119,7 @@
         async function deleteUser(id) {
             if (confirm('Are you sure you want to delete this user?')) {
                 try {
-                    await fetchAPI(`${API_URL}/${id}`, false, { method: 'DELETE', headers: apiHeaders });
+                    await fetchAPI(API_URL+'/'+id, false, { method: 'DELETE', headers: apiHeaders });
                     showMessage('User deleted successfully!');
                     getUsers();
                 } catch (error) {
