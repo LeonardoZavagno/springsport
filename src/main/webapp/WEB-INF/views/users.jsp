@@ -64,18 +64,21 @@
             [csrfHeader]: csrfToken
         };
 
-        async function fetchAPI(url, options = {}) {
+        async function fetchAPI(url, returnJson, options = {}) {
             const response = await fetch(url, options);
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorText}`);
             }
-            return response.json();
+            if (returnJson) {
+                return response.json();
+            }
+            return null;
         }
 
         async function getUsers() {
             try {
-                const users = await fetchAPI(API_URL);
+                const users = await fetchAPI(API_URL, true);
                 usersTableBody.innerHTML = '';
                 users.forEach(user => {
                     const row = usersTableBody.insertRow();
@@ -104,7 +107,7 @@
             const url = id ? `${API_URL}/${id}` : API_URL;
 
             try {
-                await fetchAPI(url, { method, headers: apiHeaders, body: JSON.stringify(user) });
+                await fetchAPI(url, false, { method, headers: apiHeaders, body: JSON.stringify(user) });
                 showMessage(`User ${id ? 'updated' : 'created'} successfully!`);
                 resetForm();
                 getUsers();
@@ -116,7 +119,7 @@
         async function deleteUser(id) {
             if (confirm('Are you sure you want to delete this user?')) {
                 try {
-                    await fetchAPI(`${API_URL}/${id}`, { method: 'DELETE', headers: apiHeaders });
+                    await fetchAPI(`${API_URL}/${id}`, false, { method: 'DELETE', headers: apiHeaders });
                     showMessage('User deleted successfully!');
                     getUsers();
                 } catch (error) {
