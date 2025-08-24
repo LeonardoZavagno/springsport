@@ -10,7 +10,7 @@
     <a href="/">Home</a>
     <br/>
     <hr>
-    <div id="message" style="color:green; font-weight: bold;"></div>
+    <div id="message"></div>
     <h1>New/Edit User</h1>
     <form id="user-form">
         <input type="hidden" id="user_id"/>
@@ -69,9 +69,6 @@
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorText}`);
-            }
-            if (response.status === 204) {
-                return null;
             }
             return response.json();
         }
