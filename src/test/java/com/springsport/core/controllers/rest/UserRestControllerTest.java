@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,7 +42,7 @@ public class UserRestControllerTest {
 	private UserService userService;
 
 	@Test
-	@DisplayName("GET /api/v1/users - Should return all users")
+	@DisplayName("GET /api/v1/users - Should return all users and 200 OK")
 	public void shouldReturnAllUsers() throws Exception {
         User user1 = new User(1L, "name_1", "surname_1");
         User user2 = new User(2L, "name_2", "surname_2");
@@ -58,7 +59,7 @@ public class UserRestControllerTest {
 	}
 
 	@Test
-	@DisplayName("GET /api/v1/users/{id} - Should return a single user by ID")
+	@DisplayName("GET /api/v1/users/{id} - Should return a single user by ID and 200 OK")
 	public void shouldReturnOneUser() throws Exception {
         User user1 = new User(1L, "name_1", "surname_1");
 
@@ -72,8 +73,8 @@ public class UserRestControllerTest {
 	}
 
 	@Test
-    @DisplayName("POST /api/v1/users - Should create a new user")
-    public void shouldCreateUser() throws Exception {
+    @DisplayName("POST /api/v1/users - Should create a new user and return 201 Created")
+    public void shouldCreateUserAndReturn201() throws Exception {
         User userToCreate = new User(null, "new_name", "new_surname");
         User createdUser = new User(3L, "new_name", "new_surname");
 
@@ -84,14 +85,15 @@ public class UserRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userToCreate)))
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/api/v1/users/3"))
                 .andExpect(jsonPath("$.user_id").value(createdUser.getUser_id()))
                 .andExpect(jsonPath("$.user_name").value(createdUser.getUser_name()))
                 .andExpect(jsonPath("$.user_surname").value(createdUser.getUser_surname()));
     }
 
     @Test
-    @DisplayName("PUT /api/v1/users/{id} - Should update an existing user")
+    @DisplayName("PUT /api/v1/users/{id} - Should update an existing user and return 200 OK")
     public void shouldUpdateUser() throws Exception {
         Long userId = 1L;
         User userToUpdate = new User(userId, "updated_name", "updated_surname");
@@ -110,13 +112,13 @@ public class UserRestControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/v1/users/{id} - Should delete an existing user")
-    public void shouldDeleteUser() throws Exception {
+    @DisplayName("DELETE /api/v1/users/{id} - Should delete an existing user and return 204 No Content")
+    public void shouldDeleteUserAndReturn204() throws Exception {
         Long userId = 1L;
         doNothing().when(userService).delete(userId);
 
         mockMvc.perform(delete("/api/v1/users/{id}", userId)
                 .with(user("leonardo").roles("ADMIN")).with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 }

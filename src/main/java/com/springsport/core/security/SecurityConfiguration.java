@@ -44,7 +44,9 @@ public class SecurityConfiguration {
                 .requestMatchers(mvc.pattern("/api/v1/users/**")).hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
-            .formLogin(Customizer.withDefaults())
+            .formLogin(form -> form
+                .defaultSuccessUrl("/", true)
+            )
             .logout(Customizer.withDefaults())
             .httpBasic(Customizer.withDefaults());
 
