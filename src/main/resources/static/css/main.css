@@ -1,25 +1,32 @@
 /* --- Google Font Import --- */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-/* --- Modern CSS Properties & Variables --- */
+/* --- Variables --- */
 :root {
     --primary-color: #007bff;
     --primary-hover: #0056b3;
-    --primary-glow: rgba(0, 123, 255, 0.15);
-    --background-start: #f8f9fa;
-    --background-end: #e9ecef;
-    --surface-color: #ffffff;
-    --text-color: #343a40;
-    --muted-text-color: #6c757d;
-    --border-color: #dee2e6;
+    --primary-glow: rgba(0, 123, 255, 0.2);
+    --bg-start: #f8f9fa;
+    --bg-end: #e9ecef;
+    --surface: #ffffff;
+    --text: #343a40;
+    --text-muted: #6c757d;
+    --border: #dee2e6;
+    --radius-md: 12px;
+    --radius-sm: 6px;
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.08);
-    --border-radius-md: 12px;
-    --border-radius-sm: 6px;
-    --transition-speed: 0.3s;
+    --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.1);
+    --transition: 0.25s ease;
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2.5rem;
+    --font-lg: 2.5rem;
+    --font-md: 1.2rem;
+    --font-sm: 0.95rem;
 }
 
-/* --- Base & Reset --- */
+/* --- Reset --- */
 * {
     margin: 0;
     padding: 0;
@@ -28,51 +35,51 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-image: linear-gradient(to bottom right, var(--background-start), var(--background-end));
-    color: var(--text-color);
+    background: linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
+    color: var(--text);
     line-height: 1.6;
+    min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-    min-height: 100vh;
 }
 
-/* --- Layout & Containers --- */
+/* --- Layout --- */
 .container {
     max-width: 1200px;
-    margin: 3rem auto;
-    padding: 2.5rem;
-    background: var(--surface-color);
-    border-radius: var(--border-radius-md);
+    margin: var(--space-lg) auto;
+    padding: var(--space-lg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
-    border: 1px solid var(--border-color);
 }
 
 /* --- Typography --- */
 h1, h2, h3 {
-    margin-bottom: 1.25rem;
+    margin-bottom: var(--space-sm);
     font-weight: 600;
     line-height: 1.2;
-    color: var(--text-color);
+    color: var(--text);
 }
 
 h1 {
-    font-size: 2.5rem;
+    font-size: var(--font-lg);
     color: var(--primary-color);
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--border);
 }
 
 p {
-    margin-bottom: 1rem;
-    color: var(--muted-text-color);
+    margin-bottom: var(--space-sm);
+    color: var(--text-muted);
+    font-size: var(--font-sm);
 }
 
-/* --- Interactive Elements: Links & Buttons --- */
+/* --- Links & Buttons --- */
 a {
     color: var(--primary-color);
     text-decoration: none;
-    transition: color var(--transition-speed) ease;
+    transition: color var(--transition);
 }
 
 a:hover {
@@ -81,65 +88,56 @@ a:hover {
 
 .btn {
     display: inline-block;
-    padding: 0.8rem 1.8rem;
+    padding: 0.8rem 1.5rem;
     background: var(--primary-color);
     color: #fff;
     border: none;
-    border-radius: var(--border-radius-sm);
-    font-size: 1rem;
+    border-radius: var(--radius-sm);
     font-weight: 600;
-    text-align: center;
     cursor: pointer;
-    transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
-    text-decoration: none;
+    transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
 }
 
 .btn:hover {
     background: var(--primary-hover);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    text-decoration: none;
+    box-shadow: var(--shadow-sm);
 }
 
 .btn:focus-visible {
     outline: 3px solid var(--primary-glow);
-    outline-offset: 2px;
+    outline-offset: 3px;
 }
 
-/* --- Data Table Styling --- */
+/* --- Tables --- */
 .styled-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 2rem 0;
-    font-size: 0.95em;
+    margin: var(--space-md) 0;
+    font-size: var(--font-sm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
     overflow: hidden;
-    border-radius: var(--border-radius-sm);
-    border: 1px solid var(--border-color);
 }
 
-.styled-table thead tr {
+.styled-table thead {
     background-color: var(--primary-color);
-    color: #ffffff;
-    text-align: left;
+    color: #fff;
     font-weight: 600;
 }
 
 .styled-table th,
 .styled-table td {
-    padding: 15px 18px;
+    padding: var(--space-sm);
 }
 
 .styled-table tbody tr {
-    border-bottom: 1px solid var(--border-color);
-    transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+    border-bottom: 1px solid var(--border);
+    transition: background var(--transition), transform var(--transition);
 }
 
 .styled-table tbody tr:nth-of-type(even) {
-    background-color: var(--background-start);
-}
-
-.styled-table tbody tr:last-of-type {
-    border-bottom: none;
+    background-color: var(--bg-start);
 }
 
 .styled-table tbody tr:hover {
@@ -148,67 +146,59 @@ a:hover {
     cursor: pointer;
 }
 
-/* --- Responsive Design --- */
+/* --- Responsive --- */
 @media (max-width: 768px) {
     .container {
-        margin: 1rem;
-        padding: 1.5rem;
-        border-radius: 0;
+        margin: var(--space-sm);
+        padding: var(--space-md);
         border: none;
         box-shadow: none;
+        border-radius: 0;
     }
 
     h1 {
         font-size: 2rem;
     }
 
-    /* Responsive Table: Transforms into a list of cards */
     .styled-table {
         border: 0;
     }
 
     .styled-table thead {
-        border: none;
-        clip: rect(0 0 0 0);
-        height: 1px;
-        margin: -1px;
-        overflow: hidden;
-        padding: 0;
-        position: absolute;
-        width: 1px;
+        display: none;
     }
 
     .styled-table tr {
-        border: 1px solid var(--border-color);
-        border-radius: var(--border-radius-sm);
-        box-shadow: var(--shadow-sm);
         display: block;
-        margin-bottom: 1rem;
-    }
-    
-    .styled-table tbody tr:hover {
-        transform: none; /* Disable hover transform on mobile */
+        margin-bottom: var(--space-sm);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        box-shadow: var(--shadow-sm);
     }
 
     .styled-table td {
-        border-bottom: 1px dotted var(--border-color);
         display: block;
-        font-size: .9em;
         text-align: right;
+        font-size: var(--font-sm);
         padding-left: 50%;
         position: relative;
+        border-bottom: 1px dotted var(--border);
     }
 
     .styled-table td::before {
-        /* This is for the cell label and requires a data-label attribute in the HTML */
         content: attr(data-label);
-        float: left;
+        position: absolute;
+        left: var(--space-sm);
         font-weight: bold;
-        text-transform: uppercase;
         color: var(--primary-color);
+        text-transform: uppercase;
     }
 
     .styled-table td:last-child {
-        border-bottom: 0;
+        border-bottom: none;
+    }
+
+    .styled-table tbody tr:hover {
+        transform: none;
     }
 }
