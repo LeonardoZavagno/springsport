@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Greeting</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/main.css">
 </head>
 <body>
     <a href="users">Go to Users</a>
