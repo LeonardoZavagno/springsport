@@ -38,9 +38,7 @@ public class SecurityConfiguration {
 		MvcRequestMatcher.Builder mvc = new MvcRequestMatcher.Builder(introspector);
 
         http.authorizeHttpRequests(auth -> auth
-                // Allow home page and static resources
-                .requestMatchers(mvc.pattern("/"), mvc.pattern("/css/**"), mvc.pattern("/js/**")).permitAll()
-                // Protect REST API
+                .requestMatchers(mvc.pattern("/")).permitAll()
                 .requestMatchers(mvc.pattern("/api/v1/users/**")).hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
