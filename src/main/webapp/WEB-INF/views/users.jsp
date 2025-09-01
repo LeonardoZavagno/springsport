@@ -5,48 +5,59 @@
     <title>User Management</title>
     <meta name="_csrf" content="${_csrf.token}"/>
     <meta name="_csrf_header" content="${_csrf.headerName}"/>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </head>
 <body>
-    <a href="/">Home</a>
-    <br/>
-    <hr>
-    <div id="message"></div>
-    <h1>New/Edit User</h1>
-    <form id="user-form">
-        <input type="hidden" id="user_id"/>
-        <table>
-            <tbody>
-                <tr>
-                    <td><label for="user_name">NAME:</label></td>
-                    <td><input type="text" id="user_name" maxlength="50" required/></td>
-                </tr>
-                <tr>
-                    <td><label for="user_surname">SURNAME:</label></td>
-                    <td><input type="text" id="user_surname" maxlength="50" required/></td>
-                </tr>
-            </tbody>
-        </table>
-        <input type="submit" value="Create"/>
-        <button type="button" id="cancel-edit">Cancel</button>
-    </form>
-    <br/>
-    <hr>
-    <h1>List Users</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>NAME</th>
-                <th>SURNAME</th>
-                <th colspan="2">ACTIONS</th>
-            </tr>
-        </thead>
-        <tbody id="users-table-body">
-        </tbody>
-    </table>
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-wrapper blue">
+            <a href="/" class="brand-logo" style="padding-left: 10px;">SpringSport</a>
+            <ul class="right">
+                <li><a href="users">Users</a></li>
+                <li><a href="logout">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
 
+    <!-- Main Content -->
+    <div class="container" style="margin-top: 50px;">
+        <h4 id="section-form" class="section">New User</h4>
+        <form id="user-form" class="col s12">
+            <input type="hidden" id="user_id"/>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input type="text" id="user_name" maxlength="50" required>
+                    <label for="user_name">Name</label>
+                </div>
+                <div class="input-field col s6">
+                    <input type="text" id="user_surname" maxlength="50" required>
+                    <label for="user_surname">Surname</label>
+                </div>
+            </div>
+            <button type="submit" class="btn waves-effect waves-light">Create</button>
+            <button type="button" id="cancel-edit" class="btn grey lighten-1 waves-effect waves-light">Cancel</button>
+        </form>
+        <div id="message" class="section"></div>
+
+        <br/>
+        <h4 class="section">List Users</h4>
+        <table class="highlight responsive-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th colspan="2">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="users-table-body"></tbody>
+        </table>
+    </div>
+
+    <!-- JavaScript -->
     <script>
+        const sectionForm = document.getElementById('section-form');
         const userForm = document.getElementById('user-form');
         const userIdField = document.getElementById('user_id');
         const userNameField = document.getElementById('user_name');
@@ -57,25 +68,16 @@
 
         const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
         const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
-
         const API_URL = '/api/v1/users';
-
-        const apiHeaders = {
-            'Content-Type': 'application/json',
-            [csrfHeader]: csrfToken
-        };
+        const apiHeaders = { 'Content-Type': 'application/json', [csrfHeader]: csrfToken };
 
         async function fetchAPI(url, options = {}) {
             const response = await fetch(url, options);
-
             if (!response.ok) {
                 const errorText = await response.text().catch(() => 'Could not read error body.');
                 throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorText || 'No error details provided.'}`);
             }
-
-            if (response.status === 204) {
-                return null;
-            }
+            if (response.status === 204) return null;
             return response.json();
         }
 
@@ -91,11 +93,13 @@
 
                     const editButton = document.createElement('button');
                     editButton.textContent = 'Edit';
+                    editButton.className = 'btn-small blue waves-effect waves-light';
                     editButton.addEventListener('click', () => editUser(user.user_id, user.user_name, user.user_surname));
                     row.insertCell().appendChild(editButton);
 
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = 'Delete';
+                    deleteButton.className = 'btn-small red waves-effect waves-light';
                     deleteButton.addEventListener('click', () => deleteUser(user.user_id));
                     row.insertCell().appendChild(deleteButton);
                 });
@@ -132,21 +136,24 @@
         }
 
         function editUser(id, name, surname) {
+            sectionForm.textContent = 'Edit User';
             userIdField.value = id;
             userNameField.value = name;
             userSurnameField.value = surname;
-            userForm.querySelector('input[type="submit"]').value = 'Update';
+            userForm.querySelector('button[type="submit"]').textContent = 'Update';
+            M.updateTextFields();
         }
 
         function resetForm() {
+            sectionForm.textContent = 'New User';
             userForm.reset();
             userIdField.value = '';
-            userForm.querySelector('input[type="submit"]').value = 'Create';
+            userForm.querySelector('button[type="submit"]').textContent = 'Create';
         }
 
         function showMessage(msg, isError = false) {
             messageDiv.textContent = msg;
-            messageDiv.style.color = isError ? 'red' : 'green';
+            messageDiv.className = isError ? 'red-text text-darken-2' : 'green-text text-darken-2';
         }
 
         userForm.addEventListener('submit', (e) => {
@@ -156,7 +163,6 @@
         });
 
         cancelBtn.addEventListener('click', resetForm);
-
         getUsers();
     </script>
 </body>
