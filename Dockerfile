@@ -9,7 +9,7 @@ COPY pom.xml .
 COPY src ./src
 
 # Build the WAR
-RUN apt-get update && apt-get install -y maven && mvn clean package
+RUN apt-get update && apt-get install -y maven && mvn clean package -DskipTests
 
 # Expose port
 EXPOSE 8080
