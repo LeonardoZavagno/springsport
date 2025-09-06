@@ -2,6 +2,7 @@ package com.springsport.core.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,6 +40,7 @@ public class SecurityConfiguration {
 
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(mvc.pattern("/")).permitAll()
+                .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/v1/users/**")).hasAnyRole("USER", "ADMIN")
                 .requestMatchers(mvc.pattern("/api/v1/users/**")).hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
@@ -46,7 +48,8 @@ public class SecurityConfiguration {
                 .defaultSuccessUrl("/", true)
             )
             .logout(Customizer.withDefaults())
-            .httpBasic(Customizer.withDefaults());
+            .httpBasic(Customizer.withDefaults())
+            .csrf(csrf -> csrf.disable()); //TODO implement this
 
         return http.build();
     }

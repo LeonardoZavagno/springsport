@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>User Management</title>
-    <meta name="_csrf" content="${_csrf.token}"/>
-    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </head>
@@ -14,8 +12,8 @@
         <div class="nav-wrapper blue">
             <a href="/" class="brand-logo" style="padding-left: 10px;">SpringSport</a>
             <ul class="right">
-                <li><a href="users">Users</a></li>
-                <li><a href="logout">Logout</a></li>
+                <li><a href="/users">Users</a></li>
+                <li><a href="/logout">Logout</a></li>
             </ul>
         </div>
     </nav>
@@ -66,10 +64,8 @@
         const messageDiv = document.getElementById('message');
         const cancelBtn = document.getElementById('cancel-edit');
 
-        const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
-        const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
         const API_URL = '/api/v1/users';
-        const apiHeaders = { 'Content-Type': 'application/json', [csrfHeader]: csrfToken };
+        const apiHeaders = { 'Content-Type': 'application/json'};
 
         async function fetchAPI(url, options = {}) {
             const response = await fetch(url, options);

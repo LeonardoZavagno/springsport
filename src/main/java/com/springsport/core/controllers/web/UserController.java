@@ -7,5 +7,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class UserController {
 
     @GetMapping("/users")
-    public String showUsersPage() { return "users.jsp"; }
+    public String showUsersPage() { return "redirect:/users.html"; }
 }
