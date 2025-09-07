@@ -1,10 +1,12 @@
 // DOM Elements
+const loginSection = document.getElementById('login-section');
 const homeSection = document.getElementById('home-section');
 const usersSection = document.getElementById('users-section');
 const navHome = document.getElementById('nav-home');
 const navUsers = document.getElementById('nav-users');
 const navLogout = document.getElementById('nav-logout');
 const loginForm = document.getElementById('login-form');
+const loginMessageDiv = document.getElementById('login-message');
 const userForm = document.getElementById('user-form');
 const userIdField = document.getElementById('user_id');
 const userNameField = document.getElementById('user_name');
@@ -12,22 +14,32 @@ const userSurnameField = document.getElementById('user_surname');
 const usersTableBody = document.getElementById('users-table-body');
 const messageDiv = document.getElementById('message');
 const cancelBtn = document.getElementById('cancel-edit');
+const logo = document.querySelector('.brand-logo');
 
 // --- Utility functions ---
 function showSection(section) {
-    homeSection.style.display = "none";
-    usersSection.style.display = "none";
-    section.style.display = "block";
+    loginSection.style.display = 'none';
+    homeSection.style.display = 'none';
+    usersSection.style.display = 'none';
+    section.style.display = 'block';
 }
 
-function showMessage(msg, isError = false) {
-    messageDiv.textContent = msg;
-    messageDiv.className = isError ? 'red-text text-darken-2' : 'green-text text-darken-2';
+function showMessage(msg, isError = false, target = messageDiv) {
+    target.textContent = msg;
+    target.className = isError ? 'red-text text-darken-2' : 'green-text text-darken-2';
 }
 
 function resetForm() {
     userForm.reset();
     userIdField.value = '';
+    M.updateTextFields();
+}
+
+function updateNav() {
+    const loggedIn = !!sessionStorage.getItem('jwt');
+    navUsers.style.display = loggedIn ? 'block' : 'none';
+    navLogout.style.display = loggedIn ? 'block' : 'none';
+    navHome.style.display = loggedIn ? 'block' : 'none';
 }
 
 // --- Auth functions ---
@@ -37,17 +49,16 @@ async function loginUser(username, password) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
     });
-
-    if (!res.ok) throw new Error('Login failed');
-
+    if (!res.ok) throw new Error('Invalid credentials');
     const data = await res.json();
     sessionStorage.setItem('jwt', data.token);
 }
 
 function logoutUser() {
     sessionStorage.removeItem('jwt');
-    showSection(homeSection);
-    showMessage('Logged out');
+    updateNav();
+    showSection(loginSection);
+    showMessage('', false, loginMessageDiv);
 }
 
 // --- Fetch wrapper with JWT ---
@@ -89,7 +100,9 @@ async function getUsers() {
             delBtn.onclick = () => deleteUser(u.user_id);
             row.insertCell().appendChild(delBtn);
         });
-    } catch (err) { showMessage(err.message, true); }
+    } catch (err) {
+        showMessage(err.message, true);
+    }
 }
 
 async function saveUser(user) {
@@ -101,7 +114,9 @@ async function saveUser(user) {
         showMessage(id ? 'User updated!' : 'User created!');
         resetForm();
         getUsers();
-    } catch (err) { showMessage(err.message, true); }
+    } catch (err) {
+        showMessage(err.message, true);
+    }
 }
 
 async function deleteUser(id) {
@@ -110,10 +125,37 @@ async function deleteUser(id) {
         await fetchAPI(`/api/v1/users/${id}`, { method: 'DELETE' });
         showMessage('User deleted!');
         getUsers();
-    } catch (err) { showMessage(err.message, true); }
+    } catch (err) {
+        showMessage(err.message, true);
+    }
+}
+
+function editUser(id, name, surname) {
+    userIdField.value = id;
+    userNameField.value = name;
+    userSurnameField.value = surname;
+    M.updateTextFields();
+}
+
+// --- Navigation logic ---
+function showHomeOrLogin() {
+    if (sessionStorage.getItem('jwt')) {
+        showSection(homeSection);
+    } else {
+        showSection(loginSection);
+    }
 }
 
 // --- Event listeners ---
+logo.addEventListener('click', e => { e.preventDefault(); showHomeOrLogin(); });
+navUsers.addEventListener('click', e => { 
+    e.preventDefault(); 
+    if (!sessionStorage.getItem('jwt')) return showSection(loginSection);
+    showSection(usersSection); 
+    getUsers(); 
+});
+navLogout.addEventListener('click', e => { e.preventDefault(); logoutUser(); });
+
 if (loginForm) {
     loginForm.addEventListener('submit', async e => {
         e.preventDefault();
@@ -121,10 +163,11 @@ if (loginForm) {
             const username = loginForm.username.value;
             const password = loginForm.password.value;
             await loginUser(username, password);
+            updateNav();
             showSection(homeSection);
-            showMessage(`Welcome ${username}`);
+            showMessage(`Welcome ${username}`, false, loginMessageDiv);
         } catch (err) {
-            showMessage(err.message, true);
+            showMessage(err.message, true, loginMessageDiv);
         }
     });
 }
@@ -135,13 +178,13 @@ userForm.addEventListener('submit', e => {
 });
 
 cancelBtn.addEventListener('click', resetForm);
-navHome.addEventListener('click', e => { e.preventDefault(); showSection(homeSection); });
-navUsers.addEventListener('click', e => { e.preventDefault(); showSection(usersSection); getUsers(); });
-navLogout.addEventListener('click', e => { e.preventDefault(); logoutUser(); });
 
-// --- Edit user helper ---
-function editUser(id, name, surname) {
-    userIdField.value = id;
-    userNameField.value = name;
-    userSurnameField.value = surname;
-}
+// --- Initial page load ---
+document.addEventListener('DOMContentLoaded', () => {
+    updateNav();
+    if (sessionStorage.getItem('jwt')) {
+        showSection(homeSection);
+    } else {
+        showSection(loginSection);
+    }
+});
