@@ -84,7 +84,14 @@ public class SecurityConfiguration {
         http
             .csrf(csrf -> csrf.disable()) // CSRF not needed for stateless API
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/app-version").permitAll()
+                .requestMatchers(
+                    "/",
+                    "/index.html",
+                    "/app.js",
+                    "/favicon.ico",
+                    "/login",
+                    "/app-version"
+                ).permitAll()
                 .requestMatchers("/api/**").authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
