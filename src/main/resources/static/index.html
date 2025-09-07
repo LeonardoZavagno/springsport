@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpringSport SPA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="module" src="app.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-wrapper blue">
+            <a href="#" class="brand-logo" style="padding-left: 10px;">SpringSport</a>
+            <ul class="right">
+                <li><a href="#" id="nav-home">Home</a></li>
+                <li><a href="#" id="nav-users">Users</a></li>
+                <li><a href="#" id="nav-logout">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Section Home -->
+    <div id="home-section" class="container" style="margin-top:50px;">
+        <h4>Welcome to SpringSport SPA!</h4>
+    </div>
+
+    <!-- Section Users -->
+    <div id="users-section" class="container" style="margin-top:50px;">
+        <h4 id="section-form" class="section">New User</h4>
+        <form id="user-form" class="col s12">
+            <input type="hidden" id="user_id"/>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input type="text" id="user_name" maxlength="50" required>
+                    <label for="user_name">Name</label>
+                </div>
+                <div class="input-field col s6">
+                    <input type="text" id="user_surname" maxlength="50" required>
+                    <label for="user_surname">Surname</label>
+                </div>
+            </div>
+            <button type="submit" class="btn waves-effect waves-light">Create</button>
+            <button type="button" id="cancel-edit" class="btn grey lighten-1 waves-effect waves-light">Cancel</button>
+        </form>
+        <div id="message" class="section"></div>
+
+        <h4 class="section">List Users</h4>
+        <table class="highlight responsive-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th colspan="2">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="users-table-body"></tbody>
+        </table>
+    </div>
+</body>
+</html>
