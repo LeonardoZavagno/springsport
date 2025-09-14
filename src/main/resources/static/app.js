@@ -2,6 +2,7 @@
 const loginSection = document.getElementById('login-section');
 const homeSection = document.getElementById('home-section');
 const usersSection = document.getElementById('users-section');
+const sectionForm = document.getElementById('section-form');
 const navHome = document.getElementById('nav-home');
 const navUsers = document.getElementById('nav-users');
 const navLogout = document.getElementById('nav-logout');
@@ -32,6 +33,7 @@ function showMessage(msg, isError = false, target = messageDiv) {
 function resetForm() {
     userForm.reset();
     userIdField.value = '';
+    sectionForm.textContent = 'New User';
     M.updateTextFields();
 }
 
@@ -134,6 +136,7 @@ function editUser(id, name, surname) {
     userIdField.value = id;
     userNameField.value = name;
     userSurnameField.value = surname;
+    sectionForm.textContent = 'Edit User';
     M.updateTextFields();
 }
 
