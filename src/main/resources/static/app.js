@@ -14,7 +14,8 @@ const userNameField = document.getElementById('user_name');
 const userSurnameField = document.getElementById('user_surname');
 const usersTableBody = document.getElementById('users-table-body');
 const messageDiv = document.getElementById('message');
-const cancelBtn = document.getElementById('cancel-edit');
+const saveBtn = document.getElementById('save-btn');
+const cancelBtn = document.getElementById('cancel-btn');
 const logo = document.querySelector('.brand-logo');
 
 // --- Utility functions ---
@@ -34,6 +35,7 @@ function resetForm() {
     userForm.reset();
     userIdField.value = '';
     sectionForm.textContent = 'New User';
+    saveBtn.textContent = 'Create';
     M.updateTextFields();
 }
 
@@ -137,6 +139,7 @@ function editUser(id, name, surname) {
     userNameField.value = name;
     userSurnameField.value = surname;
     sectionForm.textContent = 'Edit User';
+    saveBtn.textContent = 'Update';
     M.updateTextFields();
 }
 
