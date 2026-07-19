@@ -8,7 +8,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
@@ -22,6 +24,12 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Data
+    public static class LoginRequest {
+        private String username;
+        private String password;
+    }
+
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody LoginRequest request) {
         try {
@@ -34,11 +42,5 @@ public class AuthController {
         } catch (AuthenticationException ex) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
-    }
-
-    @Data
-    public static class LoginRequest {
-        private String username;
-        private String password;
     }
 }

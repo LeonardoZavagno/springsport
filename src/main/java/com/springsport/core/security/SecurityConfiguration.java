@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -56,8 +57,12 @@ public class SecurityConfiguration {
     @Bean
     public JwtDecoder jwtDecoder(@Value("${jwt.secret}") String jwtSecret) {
         byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
-        SecretKeySpec key = new SecretKeySpec(keyBytes, "HmacSHA256");
-        return NimbusJwtDecoder.withSecretKey(key).build();
+
+        SecretKeySpec key = new SecretKeySpec(keyBytes, MacAlgorithm.HS512.getName());
+
+        return NimbusJwtDecoder.withSecretKey(key)
+                .macAlgorithm(MacAlgorithm.HS512)
+                .build();
     }
 
     @Bean
